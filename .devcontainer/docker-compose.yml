@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  app:
+    container_name: 'Gateway_service_panin'
+    build:
+      context: app/
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace:cached
+      - ${SSH_KEY_PATH}/id_rsa:/root/.ssh/id_rsa
+      - ${SSH_KEY_PATH}/id_rsa.pub:/root/.ssh/id_rsa.pub
+    ports:
+      - '28080:8080'
+    command: sleep infinity
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - PYTHONPATH=/workspace/src
