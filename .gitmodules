@@ -1,0 +1,9 @@
+[submodule "service_face_vector"]
+	path = service_face_vector
+	url = git@hub.mos.ru:shift-python/y2024/homeworks/apanin/sercive_face_vector.git
+[submodule "service_auth"]
+	path = service_auth
+	url = git@hub.mos.ru:shift-python/y2024/homeworks/apanin/service_auth.git
+[submodule "service_transaction"]
+	path = service_transaction
+	url = git@hub.mos.ru:shift-python/y2024/homeworks/apanin/service_transaction.git
