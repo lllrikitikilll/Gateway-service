@@ -20,6 +20,7 @@ async def verify(request: ReportRequest):
                 detail=token_response.json()["detail"],
             )
         verify_response = await client.post(
-            url=f"{settings.url.verification}/verify/", json=request.verify.model_dump()
+            url=f"{settings.url.verification}/verify/", json=request.verify.model_dump(),
+            timeout=10
         )
     return verify_response.json()
