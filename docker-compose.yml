@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+    gateway:
+        container_name: gateway_container
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        ports:
+            - 8000:8000
+        environment:
+            - APP_CONFIG__url__auth=http://auth_container:8000
+            - APP_CONFIG__url__transaction=http://transaction_container:8000
+            - APP_CONFIG__url__verification=http://verification_container:8000
+
+    auth:
+        container_name: auth_container
+        build:
+            context: ./service_auth
+            dockerfile: Dockerfile
+        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        ports:
+            - 8001:8000
+        env_file:
+            - .env
+        # environment:
+        #     - APP_CONFIG__JWT__ALGORITHM=HS256
+        #     - APP_CONFIG__JWT__SECRET_KEY=SECRETKEY
+        #     - APP_CONFIG__JWT__ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+    transaction:
+        container_name: transaction_container
+        build:
+            context: ./service_transaction
+            dockerfile: Dockerfile
+        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        ports:
+            - 8002:8000
+
+    verification:
+        container_name: verification_container
+        build:
+            context: ./service_face_vector
+            dockerfile: Dockerfile
+        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        ports:
+            - 8003:8000
+        volumes:
+            - ./service_face_vector:/usr/src/app
