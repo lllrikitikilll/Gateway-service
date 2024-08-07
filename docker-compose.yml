@@ -1,12 +1,37 @@
 version: "3.8"
 
 services:
+    zookeeper:
+        image: bitnami/zookeeper:latest
+        ports:
+            - 2181:2181
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+
+    kafka:
+        image: bitnami/kafka:latest
+        ports:
+            - 9092:9092
+            - 9093:9093
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+            - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT
+            - KAFKA_CFG_LISTENERS=CLIENT://:9092
+            - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092
+            - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+        depends_on:
+            - zookeeper
+
     gateway:
         container_name: gateway_container
         build:
             context: ./
             dockerfile: Dockerfile
-        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        command: poetry run uvicorn src.app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
             - 8000:8000
         environment:
@@ -14,37 +39,47 @@ services:
             - APP_CONFIG__url__transaction=http://transaction_container:8000
             - APP_CONFIG__url__verification=http://verification_container:8000
 
+        volumes:
+            - .:/usr/src
+
     auth:
         container_name: auth_container
         build:
             context: ./service_auth
             dockerfile: Dockerfile
-        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        command: poetry run uvicorn src.app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
             - 8001:8000
         env_file:
             - .env
-        # environment:
-        #     - APP_CONFIG__JWT__ALGORITHM=HS256
-        #     - APP_CONFIG__JWT__SECRET_KEY=SECRETKEY
-        #     - APP_CONFIG__JWT__ACCESS_TOKEN_EXPIRE_MINUTES=30
+        volumes:
+            - ./service_auth:/usr/src
+            - photo-storage:/usr/photos
 
     transaction:
         container_name: transaction_container
         build:
             context: ./service_transaction
             dockerfile: Dockerfile
-        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        command: poetry run uvicorn src.app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
             - 8002:8000
+        volumes:
+            - ./service_transaction:/usr/src
 
     verification:
         container_name: verification_container
         build:
             context: ./service_face_vector
             dockerfile: Dockerfile
-        command: poetry run uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        command: poetry run uvicorn src.app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
             - 8003:8000
+        environment:
+            - APP_CONFIG__photo_path=/usr/photos
         volumes:
-            - ./service_face_vector:/usr/src/app
+            - ./service_face_vector:/usr/src
+            - photo-storage:/usr/photos
+
+volumes:
+    photo-storage:
