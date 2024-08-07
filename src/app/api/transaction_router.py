@@ -7,7 +7,6 @@ from app.schemas.transaction_schemas import TransactionRequest
 router = APIRouter(tags=["transaction"])
 
 
-
 @router.post("/transaction/", status_code=status.HTTP_200_OK)
 async def auth(request: TransactionRequest):
     """Проксирует запрос на оздание транзакции с проверкой токена."""
