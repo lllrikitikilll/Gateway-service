@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.schemas.auth_schemas import TokenSchema
+from src.app.schemas.auth_schemas import TokenSchema
 
 
 class TransactionQuery(BaseModel):

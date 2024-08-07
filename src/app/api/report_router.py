@@ -1,30 +1,30 @@
 import httpx
 from fastapi import APIRouter, HTTPException, status
 
-from app.core.settings import settings
-from app.schemas.report_schemas import ReportRequest
+from src.app.core.settings import settings
+from src.app.schemas.report_schemas import ReportRequest
+from src.app.api.client import HttpxClient
+
 
 router = APIRouter(tags=["report"])
 
+report_client = HttpxClient(base_url=settings.url.transaction)
+auth_client = HttpxClient(base_url=settings.url.auth)
 
-@router.post("/report/", status_code=status.HTTP_200_OK)
-async def auth(request: ReportRequest):
+@router.post("/report/")
+async def auth(request: ReportRequest) -> dict:
     """Проксирует запрос на список транзакций за период  с проверкой токена."""
-    async with httpx.AsyncClient() as client:
-        token_response = await client.post(
-            url=f"{settings.url.auth}/check_token/", json=request.token.model_dump()
-        )
-        if token_response.status_code != status.HTTP_200_OK:
-            raise HTTPException(
-                status_code=token_response.status_code,
-                detail=token_response.json()["detail"],
-            )
+    response = await auth_client.post(
+        endpoint="check_token/",
+        data=request.token.model_dump()
+    )
+    report_data = request.query.model_dump()
+    report_data["user_id"] = request.token.user_id
+    report_data["from_date"] = report_data["from_date"].isoformat()
+    report_data["to_date"] = report_data["to_date"].isoformat()
 
-        report_data = request.query.model_dump()
-        report_data["user_id"] = request.token.user_id
-        report_data["from_date"] = report_data["from_date"].isoformat()
-        report_data["to_date"] = report_data["to_date"].isoformat()
-        report_response = await client.post(
-            url=f"{settings.url.transaction}/get_report/", json=report_data
-        )
-    return report_response.json()
+    report_response = await report_client.post(
+        endpoint="get_report/",
+        data=report_data
+    )
+    return report_response

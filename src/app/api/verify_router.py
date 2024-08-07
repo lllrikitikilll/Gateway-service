@@ -1,8 +1,8 @@
 import httpx
 from fastapi import APIRouter, HTTPException, status
 
-from app.core.settings import settings
-from app.schemas.verify_schemas import ReportRequest
+from src.app.core.settings import settings
+from src.app.schemas.verify_schemas import ReportRequest
 
 router = APIRouter(tags=["verify"])
 
