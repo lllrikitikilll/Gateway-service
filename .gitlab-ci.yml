@@ -41,7 +41,7 @@ mypy:
   script:
     - echo "Установка зависимостей"
     - poetry add mypy
-    - poetry run mypy src/app
+    - poetry run mypy --no-namespace-packages src/app
 
 # test-coverage:
 #   stage: test
