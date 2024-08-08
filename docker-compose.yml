@@ -51,7 +51,7 @@ services:
         ports:
             - 8001:8000
         env_file:
-            - .env
+            - .env-dev
         volumes:
             - ./service_auth:/usr/src
             - photo-storage:/usr/photos
