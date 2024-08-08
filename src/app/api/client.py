@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 
 
 class HttpxClient:
-    """Кдиет для работы с сервисами."""
+    """Клиент для работы с сервисами."""
 
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
@@ -28,3 +28,11 @@ class HttpxClient:
                 status_code=response.status_code, detail=response.json()
             )
         return response.json()
+
+    async def is_ready(self) -> bool:
+        """Проверка готовности сервера."""
+        try:
+            response = await self.client.get(self.base_url)
+        except httpx.HTTPStatusError:
+            return False
+        return response.status_code == status.HTTP_200_OK
