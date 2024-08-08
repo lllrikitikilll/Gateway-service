@@ -5,7 +5,17 @@
 ```bash
 git pull git@hub.mos.ru:shift-python/y2024/homeworks/apanin/gateway_api.git
 poetry install --dev
+
+# Устанавливаем подмодули 
+git submodule init
+git submodule update
+
+# Запуск группы сервисов
+docker-compose up -d
 ```
+По умолчанию сервис будет работать по адрессу `127.0.0.1:8000`
+Работа с api сервиса `127.0.0.1:8000/docs`
+
 
 ## Структура проекта:
 ```bash
