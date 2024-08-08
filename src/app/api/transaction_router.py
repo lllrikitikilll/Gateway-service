@@ -12,6 +12,7 @@ auth_client = HttpxClient(base_url=settings.url.auth)
 
 @router.post("/transaction/")
 async def auth(request: TransactionRequest) -> dict:
+
     """Проксирует запрос на оздание транзакции с проверкой токена."""
     await auth_client.post(
         endpoint="check_token/", data=request.token.model_dump()
