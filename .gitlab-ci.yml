@@ -24,7 +24,7 @@ flake8:
       when: always
   script:
     - echo "Установка зависимостей"
-    - poetry add wemake-python-styleguide
+    - poetry install
     - poetry run flake8 src/app/
 
 mypy:
