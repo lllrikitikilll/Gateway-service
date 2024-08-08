@@ -11,5 +11,4 @@ client = HttpxClient(base_url=settings.url.auth)
 @router.post("/auth/")
 async def auth(user_req: UserAuth) -> dict:
     """Проксирует запрос на авторизацию."""
-    response = await client.post(endpoint="auth/", data=user_req.model_dump())
-    return response
+    return await client.post(endpoint="auth/", data=user_req.model_dump())

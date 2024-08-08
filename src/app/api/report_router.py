@@ -21,5 +21,4 @@ async def auth(request: ReportRequest) -> dict:
     report_data["from_date"] = report_data["from_date"].isoformat()
     report_data["to_date"] = report_data["to_date"].isoformat()
 
-    report_response = await report_client.post(endpoint="get_report/", data=report_data)
-    return report_response
+    return await report_client.post(endpoint="get_report/", data=report_data)

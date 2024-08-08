@@ -11,5 +11,4 @@ router = APIRouter(tags=["registration"])
 @router.post("/registration/")
 async def auth(user_req: UserRegister) -> dict:
     """Проксирует запрос на регистрацию."""
-    response = await client.post(endpoint="registration/", data=user_req.model_dump())
-    return response
+    return await client.post(endpoint="registration/", data=user_req.model_dump())
