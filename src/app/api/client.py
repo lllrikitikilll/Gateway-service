@@ -1,6 +1,8 @@
 import httpx
 from fastapi import HTTPException, status
 
+from src.app.core.settings import settings
+
 
 class HttpxClient:
     """Клиент для работы с сервисами."""
@@ -23,10 +25,6 @@ class HttpxClient:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
         response = await self.client.post(url, json=post_data)
-        if response.status_code != status.HTTP_200_OK:
-            raise HTTPException(
-                status_code=response.status_code, detail=response.json()
-            )
         return response.json()
 
     async def is_ready(self) -> bool:
@@ -36,3 +34,7 @@ class HttpxClient:
         except httpx.HTTPStatusError:
             return False
         return response.status_code == status.HTTP_200_OK
+
+
+transaction_client = HttpxClient(base_url=settings.url.transaction)
+auth_client = HttpxClient(base_url=settings.url.auth)
