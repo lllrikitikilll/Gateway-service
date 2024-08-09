@@ -24,8 +24,7 @@ class HttpxClient:
     async def post(self, endpoint: str, post_data: dict) -> dict:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
-        response = await self.client.post(url, json=post_data)
-        return response.json()
+        return await self.client.post(url, json=post_data)
 
     async def is_ready(self) -> bool:
         """Проверка готовности сервера."""

@@ -18,10 +18,11 @@ async def transaction(request: TransactionRequest) -> dict:
     transaction_data = request.transaction.model_dump()
     transaction_data["user_id"] = request.token.user_id
     transaction_data["operation"] = transaction_data["operation"].value
-    return await transaction_client.post(
+    transaction_response = await transaction_client.post(
         endpoint="create_transaction/",
         post_data=transaction_data,
     )
+    return transaction_response.json()
 
 
 @router.post("/report/")
@@ -37,4 +38,7 @@ async def report(request: ReportRequest) -> dict:
     report_data["from_date"] = report_data["from_date"].isoformat()
     report_data["to_date"] = report_data["to_date"].isoformat()
 
-    return await transaction_client.post(endpoint="get_report/", post_data=report_data)
+    report_response = await transaction_client.post(
+        endpoint="get_report/", post_data=report_data
+    )
+    return report_response.json()
