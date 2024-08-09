@@ -43,20 +43,20 @@ mypy:
     - poetry add mypy
     - poetry run mypy --no-namespace-packages src/app
 
-# test-coverage:
-#   stage: test
-#   tags:
-#     - gateway-runner
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-#       when: always
-#     - changes:
-#         - src/**
-#         - .gitlab-ci.yml
-#       when: always
-  # script:
-  #   - echo "Установка зависимостей"
-  #   - poetry install --no-root
-  #   - echo "Тест с coverage"
-  #   - export PYTHONPATH="$PROJECT_DIR/src"
-  #   - poetry run pytest --cov
+test-coverage:
+  stage: test
+  tags:
+    - gateway-runner
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - changes:
+        - src/**
+        - .gitlab-ci.yml
+      when: always
+  script:
+    - echo "Установка зависимостей"
+    - poetry install --no-root
+    - echo "Тест с coverage"
+    - export PYTHONPATH="$PYTHONPATH:/$PROJECT_DIR/"
+    - poetry run pytest  --cov-fail-under=90
