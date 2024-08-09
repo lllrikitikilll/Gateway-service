@@ -28,7 +28,9 @@ def mock_transaction(mocker):
 @pytest.mark.asyncio
 async def test_registration(client, mock_auth):
     """Тест для проверки регистрации."""
-    mock_auth.return_value = {"token": "valid_token"}
+    mock_auth.return_value = Mock(
+        status_code=200, json=lambda: {"token": "valid_token"}
+    )
 
     response = client.post(
         "/registration/", json={"login": "test_user", "password": "test_pass"}
@@ -45,7 +47,9 @@ async def test_registration(client, mock_auth):
 @pytest.mark.asyncio
 async def test_auth(client, mock_auth):
     """Тест авторизации пользователя."""
-    mock_auth.return_value = {"token": "valid_token"}
+    mock_auth.return_value = Mock(
+        status_code=200, json=lambda: {"token": "valid_token"}
+    )
 
     response = client.post(
         "/auth/",
@@ -74,7 +78,10 @@ async def test_transactions(client, mock_transaction, mock_auth):
     mock_auth.return_value = Mock(
         status_code=200, json=lambda: {"message": "Операция выполнена"}
     )
-    mock_transaction.return_value = {"message": "Операция выполнена"}
+    mock_transaction.return_value = Mock(
+        status_code=200,
+        json=lambda: {"message": "Операция выполнена"}
+    )
 
     response = client.post("/transaction/", json=transaction_data)
 
@@ -105,9 +112,13 @@ async def test_report(client, mock_transaction, mock_auth):
         "token": {"user_id": 1, "token": "valid_token"},
     }
     mock_auth.return_value = Mock(
-        status_code=200, json=lambda: {"message": "Операция выполнена"}
+        status_code=200,
+        json=lambda: {"message": "Операция выполнена"}
     )
-    mock_transaction.return_value = {"message": "Операция выполнена"}
+    mock_transaction.return_value = Mock(
+        status_code=200,
+        json=lambda: {"message": "Операция выполнена"}
+    )
 
     response = client.post("/report/", json=report_query)
     report_query_copy = report_query["query"]
