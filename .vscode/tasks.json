@@ -15,7 +15,7 @@
         {
             "label": "mypy",
             "type": "shell",
-            "command": "poetry run mypy src/app",
+            "command": "poetry run mypy --no-namespace-packages src/app",
         },
         {
             "label": "Coverage",

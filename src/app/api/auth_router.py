@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, HTTPException, status
 
 from src.app.api.client import auth_client
 from src.app.schemas.auth_schemas import UserAuth, UserRegister

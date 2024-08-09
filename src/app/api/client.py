@@ -21,7 +21,7 @@ class HttpxClient:
             )
         return response.json()
 
-    async def post(self, endpoint: str, post_data: dict) -> dict:
+    async def post(self, endpoint: str, post_data: dict) -> httpx.Response:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
         return await self.client.post(url, json=post_data)
