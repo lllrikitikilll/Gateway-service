@@ -10,7 +10,7 @@ router = APIRouter(tags=["transaction"])
 async def transaction(request: TransactionRequest) -> dict:
     """Проксирует запрос на оздание транзакции с проверкой токена."""
     response = await auth_client.post(
-        endpoint="check_token/", post_data=request.token.model_dump()
+        endpoint="check_token/", json=request.token.model_dump()
     )
     if response.status_code != status.HTTP_200_OK:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -20,7 +20,7 @@ async def transaction(request: TransactionRequest) -> dict:
     transaction_data["operation"] = transaction_data["operation"].value
     transaction_response = await transaction_client.post(
         endpoint="create_transaction/",
-        post_data=transaction_data,
+        json=transaction_data,
     )
     return transaction_response.json()
 
@@ -29,7 +29,7 @@ async def transaction(request: TransactionRequest) -> dict:
 async def report(request: ReportRequest) -> dict:
     """Проксирует запрос на список транзакций за период  с проверкой токена."""
     response = await auth_client.post(
-        endpoint="check_token/", post_data=request.token.model_dump()
+        endpoint="check_token/", json=request.token.model_dump()
     )
     if response.status_code != status.HTTP_200_OK:
         raise HTTPException(status_code=response.status_code, detail=response.json())
@@ -39,6 +39,6 @@ async def report(request: ReportRequest) -> dict:
     report_data["to_date"] = report_data["to_date"].isoformat()
 
     report_response = await transaction_client.post(
-        endpoint="get_report/", post_data=report_data
+        endpoint="get_report/", json=report_data
     )
     return report_response.json()

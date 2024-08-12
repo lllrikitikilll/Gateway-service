@@ -40,7 +40,7 @@ async def test_registration(client, mock_auth):
     assert response.json() == {"token": "valid_token"}
     mock_auth.assert_awaited_once_with(
         endpoint="registration/",
-        post_data={"login": "test_user", "password": "test_pass"},
+        json={"login": "test_user", "password": "test_pass"},
     )
 
 
@@ -60,7 +60,7 @@ async def test_auth(client, mock_auth):
     assert response.json() == {"token": "valid_token"}
     mock_auth.assert_awaited_once_with(
         endpoint="auth/",
-        post_data={
+        json={
             "login": "test_user",
             "password": "test_pass",
             "token": "valid_token",
@@ -92,10 +92,10 @@ async def test_transactions(client, mock_transaction, mock_auth):
     assert response.status_code == 200
     assert response.json() == {"message": "Операция выполнена"}
     mock_auth.assert_awaited_once_with(
-        endpoint="check_token/", post_data=transaction_data["token"]
+        endpoint="check_token/", json=transaction_data["token"]
     )
     mock_transaction.assert_awaited_once_with(
-        endpoint="create_transaction/", post_data=transaction_data_copy
+        endpoint="create_transaction/", json=transaction_data_copy
     )
 
 
@@ -128,11 +128,11 @@ async def test_report(client, mock_transaction, mock_auth):
     assert response.json() == {"message": "Операция выполнена"}
     # Проверка что запрос проверки токена выполнялся
     mock_auth.assert_awaited_once_with(
-        endpoint="check_token/", post_data=report_query["token"]
+        endpoint="check_token/", json=report_query["token"]
     )
     # Проверка что запрос отчета выполнился
     mock_transaction.assert_awaited_once_with(
-        endpoint="get_report/", post_data=report_query_copy
+        endpoint="get_report/", json=report_query_copy
     )
 
 
@@ -160,7 +160,7 @@ async def test_report_error(client, mock_transaction, mock_auth):
     }
     # Проверка что запрос проверки токена выполнялся
     mock_auth.assert_awaited_once_with(
-        endpoint="check_token/", post_data=transaction_data["token"]
+        endpoint="check_token/", json=transaction_data["token"]
     )
     # Проверка что запрос транзакции не выполнялся
     mock_transaction.assert_not_awaited()
