@@ -1,5 +1,5 @@
 import httpx
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, UploadFile
 
 from src.app.core.settings import settings
 
@@ -21,10 +21,16 @@ class HttpxClient:
             )
         return response.json()
 
-    async def post(self, endpoint: str, json: dict) -> httpx.Response:
+    async def post(
+            self,
+            endpoint: str,
+            json: dict = None,
+            files: UploadFile = None,
+            data: dict = None
+        ) -> httpx.Response:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
-        return await self.client.post(url, json=json)
+        return await self.client.post(url, json=json, files=files, data=data)
 
     async def is_ready(self) -> bool:
         """Проверка готовности сервера."""
