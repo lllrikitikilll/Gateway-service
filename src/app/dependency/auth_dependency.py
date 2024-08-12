@@ -3,7 +3,7 @@ from src.app.schemas.auth_schemas import TokenSchema
 from fastapi import HTTPException, status
 
 
-async def check_token_dependency(token_data: TokenSchema) -> str:
+async def check_token_dependency(token_data: TokenSchema) -> TokenSchema:
     """Проверка токена."""
     token_response = await auth_client.post(
         endpoint='check_token/',
@@ -15,4 +15,3 @@ async def check_token_dependency(token_data: TokenSchema) -> str:
             detail=token_response.json()['detail']
         )
     return token_data
-
