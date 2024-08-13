@@ -1,21 +1,19 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends
 
-from src.app.client import auth_client, transaction_client
-from src.app.schemas.transaction_schemas import ReportQuery, Transaction
+from src.app.client import transaction_client
 from src.app.dependency.auth_dependency import check_token_dependency
 from src.app.schemas.auth_schemas import TokenSchema
-
+from src.app.schemas.transaction_schemas import ReportQuery, Transaction
 
 router = APIRouter(tags=["transaction"])
 
 
 @router.post("/transaction/")
-async def transaction(
-    request: Transaction,
-    token: TokenSchema = Depends(check_token_dependency)
+async def create_transaction(
+    transaction: Transaction, token: TokenSchema = Depends(check_token_dependency)
 ) -> dict:
     """Проксирует запрос на оздание транзакции с проверкой токена."""
-    transaction_data = request.model_dump()
+    transaction_data = transaction.model_dump()
     transaction_data["user_id"] = token.user_id
     transaction_data["operation"] = transaction_data["operation"].value
     transaction_response = await transaction_client.post(
@@ -26,12 +24,11 @@ async def transaction(
 
 
 @router.post("/report/")
-async def report(
-    request: ReportQuery,
-    token: TokenSchema=Depends(check_token_dependency)
+async def get_report(
+    report: ReportQuery, token: TokenSchema = Depends(check_token_dependency)
 ) -> dict:
     """Проксирует запрос на список транзакций за период  с проверкой токена."""
-    report_data = request.model_dump()
+    report_data = report.model_dump()
     report_data["user_id"] = token.user_id
     report_data["from_date"] = report_data["from_date"].isoformat()
     report_data["to_date"] = report_data["to_date"].isoformat()

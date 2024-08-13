@@ -56,4 +56,3 @@ class ReportQuery(BaseModel):
     user_id: int
     from_date: datetime
     to_date: datetime
-
