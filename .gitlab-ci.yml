@@ -1,0 +1,62 @@
+image: python:3.12-slim
+
+
+stages:
+  - lint
+  - test
+
+variables:
+  PROJECT_DIR: "/builds/$CI_PROJECT_PATH"
+
+before_script:
+  - pip install poetry
+
+flake8:
+  stage: lint
+  tags:
+    - gateway-runner
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - changes:
+        - src/**
+        - .gitlab-ci.yml
+      when: always
+  script:
+    - echo "Установка зависимостей"
+    - poetry add wemake-python-styleguide
+    - poetry run flake8 src/app/
+
+mypy:
+  stage: lint
+  tags:
+    - gateway-runner
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - changes:
+        - src/**
+        - .gitlab-ci.yml
+      when: always
+  script:
+    - echo "Установка зависимостей"
+    - poetry add mypy
+    - poetry run mypy src/app
+
+# test-coverage:
+#   stage: test
+#   tags:
+#     - gateway-runner
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#       when: always
+#     - changes:
+#         - src/**
+#         - .gitlab-ci.yml
+#       when: always
+  # script:
+  #   - echo "Установка зависимостей"
+  #   - poetry install --no-root
+  #   - echo "Тест с coverage"
+  #   - export PYTHONPATH="$PROJECT_DIR/src"
+  #   - poetry run pytest --cov
