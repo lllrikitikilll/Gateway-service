@@ -1,5 +1,5 @@
 import httpx
-from fastapi import HTTPException, UploadFile, status
+from fastapi import HTTPException, status
 
 from src.app.core.settings import settings
 
@@ -24,9 +24,9 @@ class HttpxClient:
     async def post(
         self,
         endpoint: str,
-        json: dict = None,
-        files: UploadFile = None,
-        data: dict = None,
+        json: dict | None = None,
+        files: dict | None = None,
+        data: dict | None = None,
     ) -> httpx.Response:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
