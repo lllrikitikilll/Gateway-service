@@ -52,6 +52,7 @@ services:
             - 8001:8000
         env_file:
             - .env-dev
+            - .env-kafka
         volumes:
             - ./service_auth:/usr/src
             - photo-storage:/usr/photos
@@ -75,8 +76,9 @@ services:
         command: poetry run uvicorn src.app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
             - 8003:8000
-        environment:
-            - APP_CONFIG__photo_path=/usr/photos
+        env_file:
+            - .env-dev
+            - .env-kafka
         volumes:
             - ./service_face_vector:/usr/src
             - photo-storage:/usr/photos
