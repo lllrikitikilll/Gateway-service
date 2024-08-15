@@ -6,7 +6,7 @@
 git pull git@hub.mos.ru:shift-python/y2024/homeworks/apanin/gateway_api.git
 poetry install --dev
 
-# Устанавливаем подмодули 
+# Устанавливаем подмодули
 git submodule init
 git submodule update
 
@@ -28,15 +28,15 @@ docker-compose up -d
 └── src                      # Основная директория с исходным кодом проекта.
     └── app                  # Основное приложение, реализованное на FastAPI.
         ├── api              # Директория с маршрутами и обработчиками API.
-        │   ├── healthz      
-        │   │   └── healthz_router.py   # Запросы к внешним серверам, проверка работоспособности    
+        │   ├── healthz
+        │   │   └── healthz_router.py   # Запросы к внешним серверам, проверка работоспособности
         │   ├── auth_router.py        # Маршруты и обработчики для аутентификации.
         │   ├── client.py             # Клиент для работы с маршрутами сервисов
         │   ├── registrate_router.py  # Маршруты для регистрации пользователей.
         │   ├── report_router.py      # Маршруты для генерации отчетов.
         │   ├── transaction_router.py # Маршруты для управления транзакциями.
         │   └── verify_router.py      # Маршруты для верификации данных.
-        ├── core              
+        ├── core
         │   └── settings.py   # Файл с конфигурацией приложения (настройки, переменные окружения).
         ├── main.py           # Точка входа в приложение, где инициализируется FastAPI.
         └── schemas           # Схемы данных (Pydantic models), используемые в API.
@@ -80,9 +80,9 @@ env_file:
         - .env-dev
 
 `.env-dev`
-APP_CONFIG__JWT__ALGORITHM=HS256
-APP_CONFIG__JWT__SECRET_KEY=SECRETKEY
-APP_CONFIG__JWT__ACCESS_TOKEN_EXPIRE_MINUTES=30
+APP_CONFIG__JWT__algorithm=HS256
+APP_CONFIG__JWT__secret_key=SECRETKEY
+APP_CONFIG__JWT__access_token_expire_minutes=30
 ```
 
 
