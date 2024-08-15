@@ -51,11 +51,12 @@ services:
         ports:
             - 8001:8000
         env_file:
-            - .env-dev
-            - .env-kafka
+            - ./.env-dev
         volumes:
             - ./service_auth:/usr/src
             - photo-storage:/usr/photos
+        depends_on:
+            - kafka
 
     transaction:
         container_name: transaction_container
@@ -77,11 +78,12 @@ services:
         ports:
             - 8003:8000
         env_file:
-            - .env-dev
-            - .env-kafka
+            - ./.env-dev
         volumes:
             - ./service_face_vector:/usr/src
             - photo-storage:/usr/photos
+        depends_on:
+            - kafka
 
 volumes:
     photo-storage:
