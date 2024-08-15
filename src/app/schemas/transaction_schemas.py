@@ -27,7 +27,7 @@ class Transaction(BaseModel):
     """Схема транзакции."""
 
     user_id: int
-    amount: float
+    amount: int
     operation: TransactionOperation
 
 
