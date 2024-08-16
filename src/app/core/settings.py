@@ -9,6 +9,8 @@ class ServiceUrl(BaseModel):
     transaction: str
     verification: str
 
+    root_prefix: str
+
 
 class Settings(BaseSettings):
     # Временный пример как мне испольховать APP_CONFIG__url__auth

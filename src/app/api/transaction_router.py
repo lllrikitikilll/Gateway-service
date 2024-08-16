@@ -1,11 +1,15 @@
 from fastapi import APIRouter, Depends
 
 from src.app.client import transaction_client
+from src.app.core.settings import settings
 from src.app.dependency.auth_dependency import check_token_dependency
 from src.app.schemas.auth_schemas import TokenSchema
 from src.app.schemas.transaction_schemas import ReportQuery, Transaction
 
-router = APIRouter(tags=["transaction"])
+router = APIRouter(
+    tags=["transaction"],
+    prefix=settings.url.root_prefix,
+)
 
 
 @router.post("/transaction/")

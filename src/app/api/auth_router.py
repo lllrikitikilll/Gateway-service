@@ -1,9 +1,14 @@
 from fastapi import APIRouter, HTTPException, status
 
 from src.app.client import auth_client
+from src.app.core.settings import settings
 from src.app.schemas.auth_schemas import UserAuth, UserRegister
 
 router = APIRouter(tags=["auth"])
+router = APIRouter(
+    tags=["auth"],
+    prefix=settings.url.root_prefix,
+)
 
 
 @router.post("/registration/")

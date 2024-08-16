@@ -1,10 +1,14 @@
 from fastapi import APIRouter, File, Form, UploadFile
 
 from src.app.client import auth_client
+from src.app.core.settings import settings
 from src.app.dependency.auth_dependency import check_token_dependency
 from src.app.schemas.auth_schemas import TokenSchema
 
-router = APIRouter(tags=["verify"])
+router = APIRouter(
+    tags=["verify"],
+    prefix=settings.url.root_prefix,
+)
 
 
 @router.post("/verify/")
