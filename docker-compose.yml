@@ -38,6 +38,7 @@ services:
             - APP_CONFIG__url__auth=http://auth_container:8000
             - APP_CONFIG__url__transaction=http://transaction_container:8000
             - APP_CONFIG__url__verification=http://verification_container:8000
+            - APP_CONFIG__url__root_prefix=/api
 
         volumes:
             - .:/usr/src
