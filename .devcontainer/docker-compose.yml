@@ -10,6 +10,8 @@ services:
       - ..:/workspace:cached
       - ${SSH_KEY_PATH}/id_rsa:/root/.ssh/id_rsa
       - ${SSH_KEY_PATH}/id_rsa.pub:/root/.ssh/id_rsa.pub
+      - ${K8S_PATH}/apanin.crt:/.kube/apanin.crt
+      - ${K8S_PATH}/apanin.key:/.kube/apanin.key
     ports:
       - '28080:8080'
     command: sleep infinity
