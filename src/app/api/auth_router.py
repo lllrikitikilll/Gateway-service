@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Response
+from fastapi import APIRouter, Response
 
 from src.app.client import auth_client
 from src.app.core.settings import settings
@@ -24,6 +24,8 @@ async def registration(user_req: UserRegister, response: Response) -> dict:
 @router.post("/auth/")
 async def auth(user_req: UserAuth, response: Response) -> dict:
     """Проксирует запрос на авторизацию."""
-    response_client = await auth_client.post(endpoint="auth/", json=user_req.model_dump())
+    response_client = await auth_client.post(
+        endpoint="auth/", json=user_req.model_dump()
+    )
     response.status_code = response_client.status_code
     return response_client.json()
