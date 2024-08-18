@@ -1,6 +1,16 @@
 version: "3.8"
 
 services:
+    postgres:
+        image: postgres:latest
+        container_name: postgres_container
+        env_file:
+            - .env-dev
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data/pgdata
+
     zookeeper:
         image: bitnami/zookeeper:latest
         ports:
@@ -85,6 +95,16 @@ services:
             - photo-storage:/usr/photos
         depends_on:
             - kafka
-
+            
+    migrate:
+        container_name: migrate_container
+        build:
+            context: ./service_auth  
+            dockerfile: Dockerfile
+        command: poetry run alembic upgrade head  
+        depends_on:
+            - postgres
+        env_file:
+            - ./.env-dev 
 volumes:
     photo-storage:
