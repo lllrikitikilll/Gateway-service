@@ -37,7 +37,7 @@ async def test_registration(client, mock_auth):
     )
 
     response = client.post(
-        "/registration/", json={"login": "test_user", "password": "test_pass"}
+        "api/registration/", json={"login": "test_user", "password": "test_pass"}
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -56,7 +56,7 @@ async def test_auth(client, mock_auth):
     )
 
     response = client.post(
-        "/auth/",
+        "api/auth/",
         json={"login": "test_user", "password": "test_pass", "token": "valid_token"},
     )
 
@@ -83,7 +83,7 @@ async def test_transactions(client, mock_transaction, mock_auth):
         status_code=status.HTTP_200_OK, json=lambda: {"message": "Операция выполнена"}
     )
 
-    response = client.post("/transaction/", json=transaction_data)
+    response = client.post("api/transaction/", json=transaction_data)
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"message": "Операция выполнена"}
@@ -112,7 +112,7 @@ async def test_report(client, mock_transaction, mock_auth):
         status_code=status.HTTP_200_OK, json=lambda: {"message": "Операция выполнена"}
     )
 
-    response = client.post("report/", json=report_query)
+    response = client.post("api/report/", json=report_query)
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"message": "Операция выполнена"}
@@ -142,7 +142,7 @@ async def test_report_error(client, mock_transaction, mock_auth):
     )
     mock_transaction.return_value = {"message": "Операция выполнена"}
 
-    response = client.post("/transaction/", json=transaction_data)
+    response = client.post("api/transaction/", json=transaction_data)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert response.json()["detail"] == "Неверные данные пользователя или токен"
