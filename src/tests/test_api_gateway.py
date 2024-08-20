@@ -107,15 +107,24 @@ async def test_report(client, mock_transaction, mock_auth):
         },
         "token_data": {"user_id": 1, "token": "valid_token"},
     }
+    timestamp = datetime.datetime.utcnow()
+    transaction = {
+        'user_id': 1,
+        'amount': 10,
+        'operation': "debit",
+        'timestamp': timestamp
+    }
+    transaction_response = transaction.copy()
+    transaction_response['timestamp'] = timestamp.isoformat()
     mock_auth.return_value = Mock(status_code=status.HTTP_200_OK)
     mock_transaction.return_value = Mock(
-        status_code=status.HTTP_200_OK, json=lambda: {"message": "Операция выполнена"}
+        status_code=status.HTTP_200_OK, json=lambda: [transaction]
     )
 
     response = client.post("api/report/", json=report_query)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"message": "Операция выполнена"}
+    assert response.json() == [transaction_response]
     # Проверка что запрос проверки токена выполнялся
     mock_auth.assert_awaited_once_with(
         endpoint="check_token/", json=report_query["token_data"]
