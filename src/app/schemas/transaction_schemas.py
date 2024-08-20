@@ -6,14 +6,8 @@ from typing import Optional
 from pydantic import BaseModel
 
 from src.app.schemas.auth_schemas import TokenSchema
+from src.app.schemas.validators import positiv_int
 
-
-class User(BaseModel):
-    """Схема пользователя."""
-
-    id: int
-    verified: bool = False
-    balance: Decimal = Decimal(0)
 
 
 class TransactionOperation(Enum):
@@ -23,31 +17,27 @@ class TransactionOperation(Enum):
     WITHDRAW: str = "withdraw"
 
 
-class Transaction(BaseModel):
+class TransactionScheme(BaseModel):
     """Схема транзакции."""
 
     user_id: int
-    amount: int
-    operation: TransactionOperation
+    amount: positiv_int
+    operation: str = "debit"
 
 
-class TransactionDB(Transaction):
-    """Схема транзакции."""
+class TransactionSchemeResponse(TransactionScheme):
+    """Схема ответа транзакции."""
 
-    datetime_utc: datetime
-
-
-class ReportTransaction(BaseModel):
-    """Транзакции за период."""
-
-    transactions: Optional[list[Transaction]]
+    timestamp: datetime
 
 
 class TransactionRequest(BaseModel):
     """Схема запроса транзакции с токеном."""
 
     token: TokenSchema
-    transaction: Transaction
+    transaction: TransactionScheme
+
+
 
 
 class ReportQuery(BaseModel):
