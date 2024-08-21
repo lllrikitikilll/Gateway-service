@@ -1,9 +1,7 @@
 from datetime import datetime
-from enum import Enum
 
 from pydantic import BaseModel
 
-from src.app.schemas.auth_schemas import TokenSchema
 from src.app.schemas.validators import positiv_int
 
 
