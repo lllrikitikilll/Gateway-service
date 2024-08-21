@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, Form, UploadFile, Response
+from fastapi import APIRouter, File, Form, Response, UploadFile
 
 from src.app.client import auth_client
 from src.app.core.settings import settings

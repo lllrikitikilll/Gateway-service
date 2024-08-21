@@ -4,24 +4,16 @@ from pydantic import BaseModel
 
 
 class UserRegister(BaseModel):
-    """Схема запроса пользователя."""
+    """Схема регистрации пользователя."""
 
     login: str
     password: str
 
 
 class UserAuth(UserRegister):
-    """Схема запроса аутентификации."""
+    """Схема аутентификации пользователя."""
 
     token: Optional[str] = None
-
-
-class User(BaseModel):
-    """Схема пользователя."""
-
-    login: str
-    hash_password: str
-    id: Optional[int] = None
 
 
 class TokenSchema(BaseModel):
