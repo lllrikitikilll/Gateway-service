@@ -1,29 +1,26 @@
-import httpx
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
 
-from app.core.settings import settings
-from app.schemas.transaction_schemas import TransactionRequest
+from src.app.api.client import HttpxClient
+from src.app.core.settings import settings
+from src.app.schemas.transaction_schemas import TransactionRequest
 
 router = APIRouter(tags=["transaction"])
 
+transaction_client = HttpxClient(base_url=settings.url.transaction)
+auth_client = HttpxClient(base_url=settings.url.auth)
 
-@router.post("/transaction/", status_code=status.HTTP_200_OK)
-async def auth(request: TransactionRequest):
+
+@router.post("/transaction/")
+async def auth(request: TransactionRequest) -> dict:
     """Проксирует запрос на оздание транзакции с проверкой токена."""
-    async with httpx.AsyncClient() as client:
-        token_response = await client.post(
-            url=f"{settings.url.auth}/check_token/", json=request.token.model_dump()
-        )
-        if token_response.status_code != status.HTTP_200_OK:
-            raise HTTPException(
-                status_code=token_response.status_code, detail=token_response.json()
-            )
-        request.transaction.user_id = request.token.user_id
-        transaction_data = request.transaction.model_dump()
-        transaction_data["user_id"] = request.token.user_id
-        transaction_data["operation"] = transaction_data["operation"].value
-        transaction_response = await client.post(
-            url=f"{settings.url.transaction}/create_transaction/",
-            json=transaction_data,
-        )
-    return transaction_response.json()
+    await auth_client.post(
+        endpoint="check_token/", data=request.token.model_dump()
+    )
+    request.transaction.user_id = request.token.user_id
+    transaction_data = request.transaction.model_dump()
+    transaction_data["user_id"] = request.token.user_id
+    transaction_data["operation"] = transaction_data["operation"].value
+    return await transaction_client.post(
+        endpoint="create_transaction/",
+        data=transaction_data,
+    )

@@ -1,8 +1,8 @@
 import httpx
 from fastapi import APIRouter, HTTPException, status
 
-from app.core.settings import settings
-from app.schemas.verify_schemas import ReportRequest
+from src.app.core.settings import settings
+from src.app.schemas.verify_schemas import ReportRequest
 
 router = APIRouter(tags=["verify"])
 
@@ -20,6 +20,8 @@ async def verify(request: ReportRequest):
                 detail=token_response.json()["detail"],
             )
         verify_response = await client.post(
-            url=f"{settings.url.verification}/verify/", json=request.verify.model_dump()
+            url=f"{settings.url.verification}/verify/",
+            json=request.verify.model_dump(),
+            timeout=10,
         )
     return verify_response.json()

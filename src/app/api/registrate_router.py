@@ -1,17 +1,14 @@
-import httpx
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 
-from app.core.settings import settings
-from app.schemas.auth_schemas import UserRegister
+from src.app.api.client import HttpxClient
+from src.app.core.settings import settings
+from src.app.schemas.auth_schemas import UserRegister
 
+client = HttpxClient(base_url=settings.url.auth)
 router = APIRouter(tags=["registration"])
 
 
-@router.post("/registration/", status_code=status.HTTP_200_OK)
-async def auth(user_req: UserRegister):
-    """Проксирует запрос на регестрацию."""
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            url=f"{settings.url.auth}/registration/", json=user_req.model_dump()
-        )
-    return response.json()
+@router.post("/registration/")
+async def auth(user_req: UserRegister) -> dict:
+    """Проксирует запрос на регистрацию."""
+    return await client.post(endpoint="registration/", data=user_req.model_dump())

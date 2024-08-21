@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class ServiceUrl(BaseModel):
     """Настройки."""
-    
+
     auth: str
     transaction: str
     verification: str

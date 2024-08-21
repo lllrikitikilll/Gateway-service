@@ -1,17 +1,14 @@
-import httpx
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 
-from app.core.settings import settings
-from app.schemas.auth_schemas import UserAuth
+from src.app.api.client import HttpxClient
+from src.app.core.settings import settings
+from src.app.schemas.auth_schemas import UserAuth
 
 router = APIRouter(tags=["auth"])
+client = HttpxClient(base_url=settings.url.auth)
 
 
-@router.post("/auth/", status_code=status.HTTP_200_OK)
-async def auth(user_req: UserAuth):
+@router.post("/auth/")
+async def auth(user_req: UserAuth) -> dict:
     """Проксирует запрос на авторизацию."""
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            url=f"{settings.url.auth}/auth/", json=user_req.model_dump()
-        )
-    return response.json()
+    return await client.post(endpoint="auth/", data=user_req.model_dump())
