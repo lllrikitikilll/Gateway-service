@@ -13,7 +13,7 @@ before_script:
 flake8:
   stage: lint
   tags:
-    - gitlab-runner-1
+    - gateway-runner
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
@@ -29,7 +29,7 @@ flake8:
 mypy:
   stage: lint
   tags:
-    - gitlab-runner-1
+    - gateway-runner
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
@@ -45,7 +45,7 @@ mypy:
 test-coverage:
   stage: test
   tags:
-    - gitlab-runner-1
+    - gateway-runner
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
@@ -59,3 +59,4 @@ test-coverage:
     - echo "Тест с coverage"
     - export PYTHONPATH="$PYTHONPATH:/$PROJECT_DIR/"
     - poetry run pytest  --cov-fail-under=90
+  
