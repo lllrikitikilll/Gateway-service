@@ -59,4 +59,3 @@ test-coverage:
     - echo "Тест с coverage"
     - export PYTHONPATH="$PYTHONPATH:/$PROJECT_DIR/"
     - poetry run pytest  --cov-fail-under=90
-  
