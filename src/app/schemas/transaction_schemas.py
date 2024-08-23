@@ -48,3 +48,18 @@ class TransactionRequest(BaseModel):
 
     token: TokenSchema
     transaction: Transaction
+
+
+class TransactionQuery(BaseModel):
+    """Схема запроса транзакций."""
+
+    user_id: int
+    from_date: datetime
+    to_date: datetime
+
+
+class ReportRequest(BaseModel):
+    """Схема запроса на список транзакций."""
+
+    token: TokenSchema
+    query: TransactionQuery
