@@ -10,7 +10,6 @@ python = "^3.12"
 fastapi = "^0.111.1"
 httpx = "^0.27.0"
 pydantic-settings = "^2.4.0"
-wemake-python-styleguide = "^0.19.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -24,6 +23,7 @@ respx = "^0.21.1"
 pytest-env = "^1.1.3"
 pytest-mock = "^3.14.0"
 pytest = "^8.3.2"
+wemake-python-styleguide = "^0.19.2"
 
 [build-system]
 requires = ["poetry-core"]
