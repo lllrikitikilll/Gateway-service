@@ -88,6 +88,9 @@ target/
 .venv/
 venv/
 
+#postgres
+pgdata
+
 # PyCharm
 .idea
 
@@ -100,3 +103,14 @@ venv/
 
 # VS Code
 .vscode/
+
+.gitlab-ci
+.editorconfig
+.gitignore
+.darglint
+.devcontainer
+.mypy_cache
+.pytest_cache
+db/
+command
+auth-manifests
