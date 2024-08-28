@@ -1,0 +1,38 @@
+CREATE TABLE Users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(100) UNIQUE NOT NULL,
+  hash_password VARCHAR(255) NOT NULL,
+  verify BOOLEAN NOT NULL DEFAULT FALSE,
+  balance INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE Tokens (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  token VARCHAR(510) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  expired TIMESTAMP,
+  FOREIGN KEY user_id FOREIGN KEY Users (id)
+);
+
+CREATE TABLE Transactions (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  operation VARCHAR(50) NOT NULL CHECK (operation IN ('debit', 'withdraw')),
+  timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  amount INTEGER NOT NULL,
+  FOREIGN KEY user_id FOREIGN KEY Users (id)
+);
+
+CREATE TABLE labels (
+  id SERIAL PRIMARY KEY,
+  label_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Transaction_Labels (
+  transaction_id INTEGER NOT NULL,
+  label_id INTEGER NOT NULL,
+  PRIMARY KEY (transaction_id, label_id),
+  FOREIGN KEY (transaction_id) REFERENCES Transactions(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (label_id) REFERENCES labels(id) ON UPDATE CASCADE ON DELETE CASCADE
+);

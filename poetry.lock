@@ -1748,4 +1748,4 @@ typing_extensions = ">=4.0,<5.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "1040e8047bfabfd02ee6674c477ca350c1f141a3f6e48991cebc3b46a66cf747"
+content-hash = "7df1ae84bc1ae99bf8e3c755a10cb0c4d481cdfb4fc7cbc50474fb7588beaa2b"

@@ -1,0 +1,41 @@
+Table Users {
+  id integer [primary key]
+  username varchar
+  hash_password varchar
+  verify bool
+}
+
+Table Tokens {
+  id integer [primary key]
+  user_id integer
+  token varchar
+  created_at timestamp
+  expired timestamp
+}
+
+Table Transactions {
+  id integer [primary key]
+  operation varchar
+  timestamp timestamp
+  amount integer
+  card_id integer
+  label_id integer
+}
+
+Table Cards {
+  id integer [primary key]
+  user_id integer
+  balance integer
+  num_card varchar
+}
+
+Table labels {
+  id integer [primary key]
+  label_name varchar unique
+}
+
+
+Ref: Tokens.user_id > Users.id
+Ref: Transactions.card_id > Cards.id
+Ref: Cards.user_id > Users.id
+Ref: Transactions.label_id <> labels.id

@@ -1,27 +1,23 @@
-import httpx
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, File, Form, UploadFile
 
-from src.app.core.settings import settings
-from src.app.schemas.verify_schemas import ReportRequest
+from src.app.client import auth_client
+from src.app.dependency.auth_dependency import check_token_dependency
+from src.app.schemas.auth_schemas import TokenSchema
 
 router = APIRouter(tags=["verify"])
 
 
-@router.post("/verify/", status_code=status.HTTP_200_OK)
-async def verify(request: ReportRequest):
-    """Проксирует запрос верифиацию по пути к файлу с проверкой токена."""
-    async with httpx.AsyncClient() as client:
-        token_response = await client.post(
-            url=f"{settings.url.auth}/check_token/", json=request.token.model_dump()
-        )
-        if token_response.status_code != status.HTTP_200_OK:
-            raise HTTPException(
-                status_code=token_response.status_code,
-                detail=token_response.json()["detail"],
-            )
-        verify_response = await client.post(
-            url=f"{settings.url.verification}/verify/",
-            json=request.verify.model_dump(),
-            timeout=10,
-        )
-    return verify_response.json()
+@router.post("/verify/")
+async def send_data(
+    file: UploadFile = File(...), user_id: int = Form(...), token: str = Form(...)
+) -> dict:
+    """Отправляет данные на серверный эндпоинт /verify/."""
+    await check_token_dependency(TokenSchema(user_id=user_id, token=token))
+
+    response = await auth_client.post(
+        endpoint="verify/",
+        files={"file": (file.filename, await file.read(), file.content_type)},
+        data={"user_id": user_id, "token": token},
+    )
+
+    return response.json()

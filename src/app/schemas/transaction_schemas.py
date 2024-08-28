@@ -27,7 +27,7 @@ class Transaction(BaseModel):
     """Схема транзакции."""
 
     user_id: int
-    amount: float
+    amount: int
     operation: TransactionOperation
 
 
@@ -50,16 +50,9 @@ class TransactionRequest(BaseModel):
     transaction: Transaction
 
 
-class TransactionQuery(BaseModel):
+class ReportQuery(BaseModel):
     """Схема запроса транзакций."""
 
     user_id: int
     from_date: datetime
     to_date: datetime
-
-
-class ReportRequest(BaseModel):
-    """Схема запроса на список транзакций."""
-
-    token: TokenSchema
-    query: TransactionQuery

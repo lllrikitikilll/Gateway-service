@@ -21,10 +21,16 @@ class HttpxClient:
             )
         return response.json()
 
-    async def post(self, endpoint: str, post_data: dict) -> httpx.Response:
+    async def post(
+        self,
+        endpoint: str,
+        json: dict | None = None,
+        files: dict | None = None,
+        data: dict | None = None,
+    ) -> httpx.Response:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
-        return await self.client.post(url, json=post_data)
+        return await self.client.post(url, json=json, files=files, data=data)
 
     async def is_ready(self) -> bool:
         """Проверка готовности сервера."""
