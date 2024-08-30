@@ -121,3 +121,6 @@ dmypy.json
 
 helm/*/requirements.lock
 helm/*/charts
+auth-manifests/
+transaction-manifests/
+verification-manifests/
