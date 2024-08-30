@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apanin-gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apanin-gateway
+  template:
+    metadata:
+      labels:
+        app: apanin-gateway
+    spec:
+      containers:
+      - name: apanin-gateway
+        image: lllrikitikilll/apanin-gateway-image
+        resources:
+          requests:
+            memory: "600Mi"
+            cpu: "80m"
+          limits:
+            memory: "600Mi"
+            cpu: "150m"
+        ports:
+        - containerPort: 8000
+        env:
+        - name: APP_CONFIG__url__auth
+          valueFrom:
+            configMapKeyRef:
+              name: apanin-gateway-configmap
+              key: APP_CONFIG__url__auth
+        - name: APP_CONFIG__url__transaction
+          valueFrom:
+            configMapKeyRef:
+              name: apanin-gateway-configmap
+              key: APP_CONFIG__url__transaction
+        - name: APP_CONFIG__url__verification
+          valueFrom:
+            configMapKeyRef:
+              name: apanin-gateway-configmap
+              key: APP_CONFIG__url__verification
+        - name: APP_CONFIG__url__root_prefix
+          valueFrom:
+            configMapKeyRef:
+              name: apanin-gateway-configmap
+              key: APP_CONFIG__url__root_prefix

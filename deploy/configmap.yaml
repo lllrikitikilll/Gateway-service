@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apanin-gateway-configmap
+data:
+  APP_CONFIG__url__auth: "http://apanin-auth-service:8001"
+  APP_CONFIG__url__transaction: "http://apanin-transaction-service:8003"
+  APP_CONFIG__url__verification: "http://apanin-verify-service:8002"
+  APP_CONFIG__url__root_prefix: "/api"
