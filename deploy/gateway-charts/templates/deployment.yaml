@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.container.image }}
+        resources:
+          requests:
+            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.cpu }}
+        ports:
+        - containerPort: {{ .Values.container.containerPort }}
+        env:
+        - name: APP_CONFIG__url__auth
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: APP_CONFIG__url__auth
+        - name: APP_CONFIG__url__transaction
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: APP_CONFIG__url__transaction
+        - name: APP_CONFIG__url__verification
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: APP_CONFIG__url__verification
+        - name: APP_CONFIG__url__root_prefix
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: APP_CONFIG__url__root_prefix

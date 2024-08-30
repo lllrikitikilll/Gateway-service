@@ -1,0 +1,26 @@
+
+
+# Deployment
+container:
+  image: lllrikitikilll/apanin-gateway-image
+  containerPort: 8000
+replicaCount: 1
+resources:
+  requests:
+    memory: "600Mi"
+    cpu: "80m"
+  limits:
+    memory: "600Mi"
+    cpu: "150m"
+envData:
+  APP_CONFIG__url__auth: "http://apanin-auth-service.test:8001"
+  APP_CONFIG__url__transaction: "http://apanin-transaction-service.test:8003"
+  APP_CONFIG__url__verification: "http://apanin-verify-service.test:8002"
+  APP_CONFIG__url__root_prefix: "/api"
+
+
+# Service
+ports:
+  port: 8000
+  targetPort: 8000
+
