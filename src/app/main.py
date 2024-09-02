@@ -5,7 +5,7 @@ from src.app.api.healthz.healthz_router import router as healthz_router
 from src.app.api.transaction_router import router as transaction_router
 from src.app.api.verify_router import router as verify_router
 
-app = FastAPI(prefix="/api")
+app = FastAPI()
 app.include_router(auth_router)
 app.include_router(transaction_router)
 app.include_router(verify_router)

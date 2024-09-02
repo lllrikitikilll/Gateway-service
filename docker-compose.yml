@@ -1,6 +1,14 @@
 version: "3.8"
 
 services:
+    postgres:
+        image: postgres:latest
+        container_name: postgres_container
+        env_file:
+            - .env-dev
+        ports:
+            - "5432:5432"
+
     zookeeper:
         image: bitnami/zookeeper:latest
         ports:
@@ -38,6 +46,7 @@ services:
             - APP_CONFIG__url__auth=http://auth_container:8000
             - APP_CONFIG__url__transaction=http://transaction_container:8000
             - APP_CONFIG__url__verification=http://verification_container:8000
+            - APP_CONFIG__url__root_prefix=/api
 
         volumes:
             - .:/usr/src
@@ -55,6 +64,8 @@ services:
         volumes:
             - ./service_auth:/usr/src
             - photo-storage:/usr/photos
+
+
         depends_on:
             - kafka
 
@@ -64,10 +75,13 @@ services:
             context: ./service_transaction
             dockerfile: Dockerfile
         command: poetry run uvicorn src.app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+        env_file:
+            - ./.env-dev 
         ports:
             - 8002:8000
         volumes:
             - ./service_transaction:/usr/src
+
 
     verification:
         container_name: verification_container
@@ -85,5 +99,7 @@ services:
         depends_on:
             - kafka
 
+
 volumes:
     photo-storage:
+
