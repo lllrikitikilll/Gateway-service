@@ -12,6 +12,7 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+
       containers:
       - name: {{ .Release.Name }}
         image: {{ .Values.container.image }}
@@ -24,6 +25,21 @@ spec:
             cpu: {{ .Values.resources.limits.cpu }}
         ports:
         - containerPort: {{ .Values.container.containerPort }}
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: {{ .Values.container.containerPort }}
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 2
+          successThresholds: 2
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: {{ .Values.container.containerPort }}
+          failureThreshold: 10
+          initialDelaySeconds: 3
+          periodSeconds: 2
         env:
         - name: APP_CONFIG__url__auth
           valueFrom:
