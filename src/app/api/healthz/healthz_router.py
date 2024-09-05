@@ -1,28 +1,30 @@
-# import asyncio
+import asyncio
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Response, status
 
-# from src.app.api.auth_router import client as auth_client
-# from src.app.api.transaction_router import transaction_client
+from src.app.client import auth_client, transaction_client
 
-router = APIRouter(tags=["helthz"], prefix="/helthz")
+router = APIRouter(tags=["healthz"], prefix="/healthz")
 
 
-@router.get("/healthz/up")
+@router.get("/live")
 async def up_check() -> int:
     """Проверьте работоспособность сервера."""
     return status.HTTP_200_OK
 
 
-@router.get("/healthz/ready")
-async def ready_check() -> int:
+@router.get("/ready")
+async def ready_check(responce: Response) -> int:
     """Проверьте работоспособность зависимостей приложения."""
-    # readiness_probes = await asyncio.gather(
-    #     *[
-    #         component
-    #         for component in [transaction_client.is_ready(), auth_client.is_ready()]
-    #     ],
-    # )
-    # ready = all(probe for probe in readiness_probes)
-    ready = all((True, True))
-    return status.HTTP_200_OK if ready else status.HTTP_200_OK
+    try:
+        readiness_probes = await asyncio.gather(
+            transaction_client.is_ready(),
+            auth_client.is_ready(),
+        )
+    except Exception:
+        return status.HTTP_503_SERVICE_UNAVAILABLE
+
+    ready = all(readiness_probes)
+    if not ready:
+        responce.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return status.HTTP_200_OK if ready else status.HTTP_503_SERVICE_UNAVAILABLE

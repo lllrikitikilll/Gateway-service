@@ -35,8 +35,8 @@ class HttpxClient:
     async def is_ready(self) -> bool:
         """Проверка готовности сервера."""
         try:
-            response = await self.client.get(self.base_url)
-        except httpx.HTTPStatusError:
+            response = await self.client.get(f"{self.base_url}/healthz/live")
+        except httpx.ConnectError:
             return False
         return response.status_code == status.HTTP_200_OK
 
