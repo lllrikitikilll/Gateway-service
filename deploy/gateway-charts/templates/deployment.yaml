@@ -61,3 +61,13 @@ spec:
             configMapKeyRef:
               name: {{ .Release.Name }}-configmap
               key: APP_CONFIG__url__root_prefix
+        - name: APP_CONFIG__jaeger_agent__jaeger_host
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: APP_CONFIG__jaeger_agent__jaeger_host
+        - name: APP_CONFIG__jaeger_agent__jaeger_port
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-configmap
+              key: APP_CONFIG__jaeger_agent__jaeger_port
