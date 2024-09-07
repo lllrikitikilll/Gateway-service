@@ -2,6 +2,13 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class JargerAgent(BaseModel):
+    """Параметры подключения Jaeger."""
+    
+    jaeger_host: str
+    jaeger_port: str
+
+
 class ServiceUrl(BaseModel):
     """Настройки."""
 
@@ -13,7 +20,6 @@ class ServiceUrl(BaseModel):
 
 
 class Settings(BaseSettings):
-    # Временный пример как мне испольховать APP_CONFIG__url__auth
     """Настройки."""
 
     model_config = SettingsConfigDict(
@@ -22,6 +28,7 @@ class Settings(BaseSettings):
         env_prefix="APP_CONFIG__",
     )
     url: ServiceUrl
+    jaeger_agent: JargerAgent
 
 
 settings = Settings()

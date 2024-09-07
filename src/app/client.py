@@ -1,5 +1,6 @@
 import httpx
 from fastapi import HTTPException, status
+from opentracing import Format, global_tracer
 
 from src.app.core.settings import settings
 
@@ -21,16 +22,23 @@ class HttpxClient:
             )
         return response.json()
 
-    async def post(
+    async def post(  # noqa: WPS211
         self,
         endpoint: str,
         json: dict | None = None,
         files: dict | None = None,
         data: dict | None = None,
+        headers: dict | None = None,
+        span_ctx=None
     ) -> httpx.Response:
         """Работа с POST методами."""
         url = f"{self.base_url}/{endpoint}"
-        return await self.client.post(url, json=json, files=files, data=data)
+        if span_ctx is not None:
+            headers = {}
+            global_tracer().inject(span_ctx, Format.HTTP_HEADERS, headers)
+        return await self.client.post(
+            url, json=json, files=files, data=data, headers=headers
+        )
 
     async def is_ready(self) -> bool:
         """Проверка готовности сервера."""

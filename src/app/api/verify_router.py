@@ -19,7 +19,9 @@ async def send_data(
     token: str = Form(...),
 ) -> dict:
     """Отправляет данные на серверный эндпоинт /verify/."""
-    await check_token_dependency(TokenSchema(user_id=user_id, token=token))
+    await check_token_dependency(
+        token_data=TokenSchema(user_id=user_id, token=token)
+    )
 
     response_verify = await auth_client.post(
         endpoint="verify/",

@@ -6,7 +6,7 @@ from opentracing import (
     SpanContextCorruptedException,
     global_tracer,
     propagation,
-    tags,
+    tags
 )
 from prometheus_client import make_asgi_app
 
@@ -14,9 +14,10 @@ from src.app.api.auth_router import router as auth_router
 from src.app.api.healthz.healthz_router import router as healthz_router
 from src.app.api.transaction_router import router as transaction_router
 from src.app.api.verify_router import router as verify_router
+from src.app.config import lifespan
 from src.app.metrics.prometheus_metric import REQUEST_COUNT, REQUEST_DURATION
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 metrics_app = make_asgi_app()
 app.mount("/metrics", metrics_app)
 
