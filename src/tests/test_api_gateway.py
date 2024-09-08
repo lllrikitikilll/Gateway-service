@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
-
+from opentracing import global_tracer
 from src.app.main import app
 from src.app.schemas.auth_schemas import TokenSchema
 
@@ -29,15 +29,23 @@ def mock_transaction(mocker):
     )
 
 
+@pytest.fixture(scope="session")
+def span_ctx():
+    """Фикстура контектса трасера"""
+    with global_tracer().start_active_span("test") as scope:
+        return scope.span.context
+
+
 @pytest.mark.asyncio
-async def test_registration(client, mock_auth):
+async def test_registration(client, mock_auth, span_ctx):
     """Тест для проверки регистрации."""
     mock_auth.return_value = Mock(
         status_code=status.HTTP_200_OK, json=lambda: {"token": "valid_token"}
     )
 
     response = client.post(
-        "api/registration/", json={"login": "test_user", "password": "test_pass"}
+        "api/registration/",
+        json={"login": "test_user", "password": "test_pass"}
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -45,11 +53,12 @@ async def test_registration(client, mock_auth):
     mock_auth.assert_awaited_once_with(
         endpoint="registration/",
         json={"login": "test_user", "password": "test_pass"},
+        span_ctx=span_ctx
     )
 
 
 @pytest.mark.asyncio
-async def test_auth(client, mock_auth):
+async def test_auth(client, mock_auth, span_ctx):
     """Тест авторизации пользователя."""
     mock_auth.return_value = Mock(
         status_code=status.HTTP_200_OK, json=lambda: {"token": "valid_token"}
@@ -69,10 +78,11 @@ async def test_auth(client, mock_auth):
             "password": "test_pass",
             "token": "valid_token",
         },
+        span_ctx=span_ctx
     )
 
 
-async def test_transactions(client, mock_transaction, mock_auth):
+async def test_transactions(client, mock_transaction, mock_auth, span_ctx):
     """Тест отправки транзакции с валидным токеном."""
     transaction_data = {
         "transaction": {"user_id": 1, "amount": 100, "operation": "debit"},
@@ -88,14 +98,16 @@ async def test_transactions(client, mock_transaction, mock_auth):
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"message": "Операция выполнена"}
     mock_auth.assert_awaited_once_with(
-        endpoint="check_token/", json=transaction_data["token_data"]
+        endpoint="check_token/", json=transaction_data["token_data"],
+        span_ctx=span_ctx
     )
     mock_transaction.assert_awaited_once_with(
-        endpoint="create_transaction/", json=transaction_data["transaction"]
+        endpoint="create_transaction/", json=transaction_data["transaction"],
+        span_ctx=span_ctx
     )
 
 
-async def test_report(client, mock_transaction, mock_auth):
+async def test_report(client, mock_transaction, mock_auth, span_ctx):
     """Тест отправки запроса на отчет с валидным токеном."""
     from_date = datetime.datetime.now().isoformat()
     to_date = datetime.datetime.now().isoformat()
@@ -118,7 +130,8 @@ async def test_report(client, mock_transaction, mock_auth):
     transaction_response['timestamp'] = timestamp.isoformat()
     mock_auth.return_value = Mock(status_code=status.HTTP_200_OK)
     mock_transaction.return_value = Mock(
-        status_code=status.HTTP_200_OK, json=lambda: [transaction]
+        status_code=status.HTTP_200_OK, json=lambda: [transaction],
+        span_ctx=span_ctx
     )
 
     response = client.post("api/report/", json=report_query)
@@ -127,15 +140,17 @@ async def test_report(client, mock_transaction, mock_auth):
     assert response.json() == [transaction_response]
     # Проверка что запрос проверки токена выполнялся
     mock_auth.assert_awaited_once_with(
-        endpoint="check_token/", json=report_query["token_data"]
+        endpoint="check_token/", json=report_query["token_data"],
+        span_ctx=span_ctx
     )
     # Проверка что запрос отчета выполнился
     mock_transaction.assert_awaited_once_with(
-        endpoint="get_report/", json=report_query["report"]
+        endpoint="get_report/", json=report_query["report"],
+        span_ctx=span_ctx
     )
 
 
-async def test_report_error(client, mock_transaction, mock_auth):
+async def test_report_error(client, mock_transaction, mock_auth, span_ctx):
     """
     Тест запроса транзакций с невалидным токеном.
 
@@ -157,7 +172,8 @@ async def test_report_error(client, mock_transaction, mock_auth):
     assert response.json()["detail"] == "Неверные данные пользователя или токен"
     # Проверка что запрос проверки токена выполнялся
     mock_auth.assert_awaited_once_with(
-        endpoint="check_token/", json=transaction_data["token_data"]
+        endpoint="check_token/", json=transaction_data["token_data"],
+        span_ctx=span_ctx
     )
     # Проверка что запрос транзакции не выполнялся
     mock_transaction.assert_not_awaited()
